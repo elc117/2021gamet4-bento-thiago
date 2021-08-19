@@ -10,10 +10,18 @@ public class Mundo implements Screen {
 
     private Texture background;
 
+    private PlayerCharacter protagonist;
+    private Character prova;
+    private Combat combat;
+
     public Mundo(final BenthiagoGame game) {
         this.game = game;
 
         background = new Texture(Gdx.files.internal("background.png"));
+
+        protagonist = new PlayerCharacter();
+        prova = new Character();
+        combat = new Combat();
     }
 
     @Override
