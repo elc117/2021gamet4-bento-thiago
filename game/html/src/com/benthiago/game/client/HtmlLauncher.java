@@ -12,7 +12,7 @@ public class HtmlLauncher extends GwtApplication {
                 // Resizable application, uses available space in browser
                 //return new GwtApplicationConfiguration(true);
                 // Fixed size application:
-                return new GwtApplicationConfiguration(800, 480);
+                return new GwtApplicationConfiguration(BenthiagoGame.VIEWPORT_WIDTH, BenthiagoGame.VIEWPORT_HEIGHT);
         }
 
         @Override

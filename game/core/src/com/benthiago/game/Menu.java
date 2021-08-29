@@ -1,11 +1,11 @@
 package com.benthiago.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-public class Menu implements Screen {
+public class Menu extends ScreenAdapter {
     final BenthiagoGame game;
 
     private Button iniciar;
@@ -21,15 +21,11 @@ public class Menu implements Screen {
     }
 
     @Override
-    public void show() {
-    }
-
-    @Override
     public void render(float delta) {
         ScreenUtils.clear(0.3f, 0.3f, 0.1f, 1);
 
-        game.camera.update();
-        game.batch.setProjectionMatrix(game.camera.combined);
+        game.menuCamera.update();
+        game.batch.setProjectionMatrix(game.menuCamera.combined);
 
         game.batch.begin();
         iniciar.batchDraw(game.batch);
@@ -39,7 +35,7 @@ public class Menu implements Screen {
 
         Vector3 touchPos = new Vector3();
         touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-        game.camera.unproject(touchPos);
+        game.menuCamera.unproject(touchPos);
 
         if (Gdx.input.isTouched() && iniciar.isTouched(touchPos.x, touchPos.y)) {
             game.mundo = new Mundo(game);
@@ -50,21 +46,6 @@ public class Menu implements Screen {
     @Override
     public void resize(int width, int height) {
         game.viewport.update(width, height);
-    }
-
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-
-    }
-
-    @Override
-    public void hide() {
-
     }
 
     @Override

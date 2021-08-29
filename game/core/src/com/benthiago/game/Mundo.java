@@ -1,6 +1,7 @@
 package com.benthiago.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -45,15 +46,32 @@ public class Mundo implements Screen {
     public void render(float delta) {
         ScreenUtils.clear(0.3f, 0.3f, 0.1f, 1);
 
-        game.camera.update();
-        game.batch.setProjectionMatrix(game.camera.combined);
+        game.playerCamera.update();
+        game.batch.setProjectionMatrix(game.playerCamera.combined);
 
-        renderer.setView(game.camera);
+        renderer.setView(game.playerCamera);
         renderer.render();
 
         game.batch.begin();
         game.batch.end();
 
+        float playerOffsetY = 0.0f;
+        float playerOffsetX = 0.0f;
+
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            playerOffsetX += 100.0f;
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            playerOffsetX -= 100.0f;
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            playerOffsetY += 100.0f;
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            playerOffsetY -= 100.0f;
+        }
+
+        game.playerCamera.translate(playerOffsetX, playerOffsetY);
     }
 
     @Override

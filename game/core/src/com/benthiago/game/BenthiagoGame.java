@@ -1,18 +1,14 @@
 package com.benthiago.game;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.FillViewport;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -27,28 +23,35 @@ public class BenthiagoGame extends Game {
 	public static final int WORLD_HEIGHT    = TILEMAP_HEIGHT * TILE_HEIGHT;
 
 	AssetManager assetManager;
-	SpriteBatch batch;
+
+	Carregador carregador;
 	Menu menu;
 	Mundo mundo;
-	OrthographicCamera camera;
+
+	SpriteBatch batch;
+	OrthographicCamera menuCamera;
+	OrthographicCamera playerCamera;
 	Viewport viewport;
 
 	@Override
 	public void create () {
 		assetManager = new AssetManager(new InternalFileHandleResolver());
-		batch        = new SpriteBatch();
-		menu         = new Menu(this);
-		camera       = new OrthographicCamera();
 
-		camera.setToOrtho(false, TILEMAP_WIDTH, TILEMAP_HEIGHT);
-		viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
+		batch = new SpriteBatch();
+
+		menuCamera = new OrthographicCamera();
+		menuCamera.setToOrtho(false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
+		viewport = new FitViewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, menuCamera);
+
+		playerCamera = new OrthographicCamera();
+		playerCamera.setToOrtho(false, TILE_WIDTH, TILE_HEIGHT);
+		viewport = new ExtendViewport(WORLD_WIDTH, WORLD_HEIGHT, playerCamera);
 
 		assetManager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
 		assetManager.load("games-from-scratch-tutorial.tmx", TiledMap.class);
 
-		assetManager.finishLoading();
-
-		this.setScreen(menu);
+		carregador = new Carregador(this);
+		this.setScreen(carregador);
 	}
 
 	@Override
@@ -59,6 +62,7 @@ public class BenthiagoGame extends Game {
 	@Override
 	public void dispose () {
 		batch.dispose();
+		carregador.dispose();
 		menu.dispose();
 		mundo.dispose();
 
