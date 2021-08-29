@@ -6,28 +6,60 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 
-public class Button extends Texture {
-    private final int x;
-    private final int y;
+public abstract class Button {
+    private Texture texture;
+    private int x;
+    private int y;
 
-    public Button(FileHandle file, final int x, final int y) {
-        super(file);
+    public Button(Texture texture) {
+        this.texture = texture;
+        this.x = 0;
+        this.y = 0;
+    }
+
+    public void setXY(int x, int y) {
         this.x = x;
         this.y = y;
     }
 
     public void batchDraw(SpriteBatch batch) {
-        int width = this.getWidth();
-        int height = this.getHeight();
-        batch.draw(this, this.x - width / 2, this.y - height / 2, width, height);
+        int width  = this.texture.getWidth();
+        int height = this.texture.getHeight();
+        batch.draw(this.texture, this.x - width / 2, this.y - height / 2, width, height);
     }
 
-    public boolean isTouched(float mouseX, float mouseY) {
-        int width = this.getWidth();
-        int height = this.getHeight();
+    public boolean checkTouched(float mouseX, float mouseY) {
+        int     width   = this.texture.getWidth();
+        int     height  = this.texture.getHeight();
         boolean insideX = mouseX >= this.x - width / 2 && mouseX <= this.x + width / 2;
         boolean insideY = mouseY >= this.y - height / 2 && mouseY <= this.y + height / 2;
-        return (insideX && insideY);
+
+        if (insideX && insideY) {
+            touchCallback();
+            return true;
+        }
+
+        return false;
     }
+
+    void dispose() {
+        this.texture.dispose();
+    }
+
+    static void arrangeCenterSpaceBetween(
+            Array<Button> buttons, int viewportWidth, int viewportHeight) {
+        int buttonsHeight = 0;
+        for (Button button: buttons) buttonsHeight += button.texture.getHeight();
+
+        int gutter      = (viewportHeight - buttonsHeight) / buttons.size;
+        int lowerMargin = gutter;
+        for (Button button: buttons) {
+            button.setXY(viewportWidth / 2, viewportHeight - lowerMargin);
+            lowerMargin += gutter + button.texture.getHeight();
+        }
+    }
+
+    abstract void touchCallback();
 }

@@ -2,22 +2,41 @@ package com.benthiago.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class Menu extends ScreenAdapter {
     final BenthiagoGame game;
 
-    private Button iniciar;
-    private Button creditos;
-    private Button opcoes;
+    private Array<Button> buttons;
 
     Menu(final BenthiagoGame game) {
         this.game = game;
-        
-        iniciar  = new Button(Gdx.files.internal("iniciar.png") , game.VIEWPORT_WIDTH / 2, game.VIEWPORT_HEIGHT - 120);
-        creditos = new Button(Gdx.files.internal("creditos.png"), game.VIEWPORT_WIDTH / 2, game.VIEWPORT_HEIGHT / 2);
-        opcoes   = new Button(Gdx.files.internal("opcoes.png")  , game.VIEWPORT_WIDTH / 2, 120);
+
+        this.buttons = new Array<Button>(new Button[] {
+            new Button(new Texture("iniciar.png")) {
+                @Override
+                void touchCallback() {
+                    game.setScreen(game.mundo);
+                }
+            },
+            new Button(new Texture("creditos.png")) {
+                @Override
+                void touchCallback() {
+                    // Doing nothing for now.
+                }
+            },
+            new Button(new Texture("opcoes.png")) {
+                @Override
+                void touchCallback() {
+                    // Doing nothing for now.
+                }
+            }
+        });
+
+        Button.arrangeCenterSpaceBetween(buttons, BenthiagoGame.VIEWPORT_WIDTH, BenthiagoGame.VIEWPORT_HEIGHT);
     }
 
     @Override
@@ -28,30 +47,31 @@ public class Menu extends ScreenAdapter {
         game.batch.setProjectionMatrix(game.menuCamera.combined);
 
         game.batch.begin();
-        iniciar.batchDraw(game.batch);
-        opcoes.batchDraw(game.batch);
-        creditos.batchDraw(game.batch);
+        for (Button button: buttons) {
+            button.batchDraw(game.batch);
+        }
         game.batch.end();
 
         Vector3 touchPos = new Vector3();
         touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
         game.menuCamera.unproject(touchPos);
 
-        if (Gdx.input.isTouched() && iniciar.isTouched(touchPos.x, touchPos.y)) {
-            game.mundo = new Mundo(game);
-            game.setScreen(game.mundo);
+        if (Gdx.input.isTouched()) {
+            for (Button button: buttons) {
+                button.checkTouched(touchPos.x, touchPos.y);
+            }
         }
     }
 
     @Override
     public void resize(int width, int height) {
-        game.viewport.update(width, height);
+        game.menuViewport.update(width, height);
     }
 
     @Override
     public void dispose() {
-        iniciar.dispose();
-        opcoes.dispose();
-        creditos.dispose();
+        for (Button button: buttons) {
+            button.dispose();
+        }
     }
 }

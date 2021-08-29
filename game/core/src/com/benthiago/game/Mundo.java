@@ -3,12 +3,14 @@ package com.benthiago.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-public class Mundo implements Screen {
+public class Mundo extends ScreenAdapter {
     final BenthiagoGame game;
 
     private Texture background;
@@ -30,16 +32,11 @@ public class Mundo implements Screen {
         prova = new Character();
         combat = new Combat();
 
-        tiledMap = game.assetManager.get("games-from-scratch-tutorial.tmx");
+        tiledMap = new TmxMapLoader().load("games-from-scratch-tutorial.tmx");
 
         float unitScale = 1 / (float) BenthiagoGame.TILE_HEIGHT;
         //renderer = new OrthogonalTiledMapRenderer(tiledMap, unitScale);
         renderer = new OrthogonalTiledMapRenderer(tiledMap);
-    }
-
-    @Override
-    public void show() {
-
     }
 
     @Override
@@ -76,22 +73,7 @@ public class Mundo implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        game.viewport.update(width, height);
-    }
-
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-
-    }
-
-    @Override
-    public void hide() {
-
+        game.playerViewport.update(width, height);
     }
 
     @Override
