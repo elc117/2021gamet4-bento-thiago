@@ -36,7 +36,7 @@ public class Menu extends ScreenAdapter {
             }
         });
 
-        Button.arrangeCenterSpaceBetween(buttons, BenthiagoGame.VIEWPORT_WIDTH, BenthiagoGame.VIEWPORT_HEIGHT);
+        Button.arrangeCenterSpaceBetween(buttons, BenthiagoGame.VIRTUAL_WIDTH, BenthiagoGame.VIRTUAL_HEIGHT);
     }
 
     @Override
@@ -65,7 +65,8 @@ public class Menu extends ScreenAdapter {
 
     @Override
     public void resize(int width, int height) {
-        game.menuViewport.update(width, height);
+        game.menuCamera.setToOrtho(false, game.VIRTUAL_WIDTH * width / (float) height, game.VIRTUAL_HEIGHT);
+        //game.menuViewport.update(width, height);
     }
 
     @Override
