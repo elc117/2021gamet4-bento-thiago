@@ -9,6 +9,8 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.utils.Array;
 import com.dongbat.jbump.World;
 
+import static com.badlogic.gdx.math.MathUtils.clamp;
+
 public class Mundo extends ScreenAdapter {
     final BenthiagoGame game;
 
@@ -42,6 +44,23 @@ public class Mundo extends ScreenAdapter {
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        {
+            //float actualWorldViewX = game.WORLD_WIDTH_VIEW;//game.playerViewport.();
+            //float actualWorldViewY = game.WORLD_HEIGHT_VIEW;//game.playerViewport.getWorldHeight();
+            float actualWorldViewX = game.playerCamera.viewportWidth / game.TILE_WIDTH;
+            float actualWorldViewY = game.playerCamera.viewportHeight / game.TILE_HEIGHT;
+            float worldCameraX = clamp(protagonist.getWorldX()
+                    , actualWorldViewX / 2.0f
+                    , game.TILEMAP_WIDTH - actualWorldViewX / 2.0f);
+            float worldCameraY = clamp(protagonist.getWorldY()
+                    , actualWorldViewY / 2.0f
+                    , game.TILEMAP_HEIGHT - actualWorldViewY / 2.0f);
+            game.playerCamera.position.set(
+                    game.TILE_WIDTH * worldCameraX
+                    , game.TILE_HEIGHT * worldCameraY
+                    , 0f
+            );
+        }
         game.playerViewport.apply();
         game.batch.setProjectionMatrix(game.playerCamera.combined);
 
@@ -56,19 +75,21 @@ public class Mundo extends ScreenAdapter {
         float playerOffsetX = 0.0f;
 
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            playerOffsetX += 100.0f * delta;
+            playerOffsetX += 4.0f;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            playerOffsetX -= 100.0f * delta;
+            playerOffsetX -= 4.0f;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            playerOffsetY += 100.0f * delta;
+            playerOffsetY += 4.0f;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            playerOffsetY -= 100.0f * delta;
+            playerOffsetY -= 4.0f;
         }
 
-        game.playerCamera.translate(playerOffsetX, playerOffsetY);
+        protagonist.move(playerOffsetX, playerOffsetY, delta);
+
+        game.soundtrack.keepPlaying();
     }
 
     @Override

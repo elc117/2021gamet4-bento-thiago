@@ -14,6 +14,8 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import static java.lang.Math.min;
+
 public class BenthiagoGame extends Game {
 	public static final int VIRTUAL_WIDTH  = 800;
 	public static final int VIRTUAL_HEIGHT = 480;
@@ -21,6 +23,8 @@ public class BenthiagoGame extends Game {
 	public static float TILEMAP_HEIGHT;
 	public static float TILE_WIDTH;
 	public static float TILE_HEIGHT;
+	public static float WORLD_WIDTH_VIEW;
+	public static float WORLD_HEIGHT_VIEW;
 
 	Soundtrack soundtrack;
 
@@ -59,6 +63,8 @@ public class BenthiagoGame extends Game {
 			TILE_WIDTH     = backgroundLayer.getTileWidth();
 			TILE_HEIGHT    = backgroundLayer.getTileHeight();
 		}
+		WORLD_WIDTH_VIEW = min(18, TILEMAP_WIDTH);
+		WORLD_HEIGHT_VIEW = min(8, TILEMAP_HEIGHT);
 
 		batch = new SpriteBatch();
 		playerTexture = new Texture(Gdx.files.internal("characters/player-from-above.png"));
@@ -69,7 +75,8 @@ public class BenthiagoGame extends Game {
 
 		playerCamera = new OrthographicCamera();
 		playerCamera.setToOrtho(false, TILEMAP_WIDTH, TILEMAP_HEIGHT);
-		playerViewport = new ExtendViewport(TILE_WIDTH * 18, TILE_HEIGHT * 8, playerCamera);
+		playerViewport = new ExtendViewport(TILE_WIDTH * WORLD_WIDTH_VIEW
+				, TILE_HEIGHT * WORLD_HEIGHT_VIEW, playerCamera);
 
 		this.credits = new Credits(this);
 		this.menu = new Menu(this);

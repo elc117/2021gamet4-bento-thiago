@@ -17,6 +17,7 @@ public class Credits extends ScreenAdapter {
     @Override
     public void render(float delta) {
         game.menuViewport.apply();
+        game.batch.setProjectionMatrix(game.menuCamera.combined);
 
         game.batch.begin();
         game.batch.draw(theCredits, 0, 0);
@@ -25,6 +26,8 @@ public class Credits extends ScreenAdapter {
         if (Gdx.input.isTouched() || Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             game.setScreen(game.menu);
         }
+
+        game.soundtrack.keepPlaying();
     }
 
     @Override
