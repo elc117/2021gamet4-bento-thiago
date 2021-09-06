@@ -1,7 +1,10 @@
 package com.benthiago.game;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -11,6 +14,8 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import static java.lang.Math.min;
+
 public class BenthiagoGame extends Game {
 	public static final int VIRTUAL_WIDTH  = 800;
 	public static final int VIRTUAL_HEIGHT = 480;
@@ -18,11 +23,20 @@ public class BenthiagoGame extends Game {
 	public static float TILEMAP_HEIGHT;
 	public static float TILE_WIDTH;
 	public static float TILE_HEIGHT;
+	public static float WORLD_WIDTH_VIEW;
+	public static float WORLD_HEIGHT_VIEW;
 
+	Soundtrack soundtrack;
+
+	Texture creditsTexture;
+
+	Credits credits;
 	Menu menu;
 	Mundo mundo;
 
 	SpriteBatch batch;
+	Texture playerTexture;
+
 	OrthographicCamera menuCamera;
 	OrthographicCamera playerCamera;
 	Viewport menuViewport;
@@ -31,10 +45,15 @@ public class BenthiagoGame extends Game {
 	TiledMap tiledMap;
 	OrthogonalTiledMapRenderer renderer;
 
+	BitmapFont font;
+
 	@Override
 	public void create () {
+		soundtrack = new Soundtrack();
 
-		tiledMap = new TmxMapLoader().load("placeholder.tmx");
+		font = new BitmapFont();
+
+		tiledMap = new TmxMapLoader().load("map/Bosque.tmx");
 		renderer = new OrthogonalTiledMapRenderer(tiledMap, 1f);
 
 		{
@@ -44,8 +63,11 @@ public class BenthiagoGame extends Game {
 			TILE_WIDTH     = backgroundLayer.getTileWidth();
 			TILE_HEIGHT    = backgroundLayer.getTileHeight();
 		}
+		WORLD_WIDTH_VIEW = min(18, TILEMAP_WIDTH);
+		WORLD_HEIGHT_VIEW = min(8, TILEMAP_HEIGHT);
 
 		batch = new SpriteBatch();
+		playerTexture = new Texture(Gdx.files.internal("characters/player-from-above.png"));
 
 		menuCamera = new OrthographicCamera();
 		menuCamera.setToOrtho(false, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
@@ -53,8 +75,10 @@ public class BenthiagoGame extends Game {
 
 		playerCamera = new OrthographicCamera();
 		playerCamera.setToOrtho(false, TILEMAP_WIDTH, TILEMAP_HEIGHT);
-		playerViewport = new ExtendViewport(TILE_WIDTH * 40, TILE_HEIGHT * 30, playerCamera);
+		playerViewport = new ExtendViewport(TILE_WIDTH * WORLD_WIDTH_VIEW
+				, TILE_HEIGHT * WORLD_HEIGHT_VIEW, playerCamera);
 
+		this.credits = new Credits(this);
 		this.menu = new Menu(this);
 		this.mundo = new Mundo(this);
 
@@ -69,8 +93,11 @@ public class BenthiagoGame extends Game {
 	@Override
 	public void dispose () {
 		batch.dispose();
+		playerTexture.dispose();
+		credits.dispose();
 		menu.dispose();
 		mundo.dispose();
 		tiledMap.dispose();
+		soundtrack.dispose();
 	}
 }

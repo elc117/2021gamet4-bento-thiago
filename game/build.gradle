@@ -27,6 +27,7 @@ allprojects {
         box2DLightsVersion = '1.5'
         aiVersion = '1.8.2'
         gdxControllersVersion = '2.1.0'
+        jbumpVersion = '419fd2d928'
     }
 
     repositories {
@@ -36,6 +37,7 @@ allprojects {
         gradlePluginPortal()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+        maven { url 'https://jitpack.io' }
     }
 }
 
@@ -67,6 +69,7 @@ project(":html") {
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion:sources"
         api "com.badlogicgames.gdx:gdx-box2d-gwt:$gdxVersion:sources"
         api "com.badlogicgames.gdx:gdx-ai:$aiVersion:sources"
+        api "com.github.implicit-invocation:jbump:$jbumpVersion:sources"
         
     }
 }
@@ -79,6 +82,7 @@ project(":core") {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-ai:$aiVersion"
-        
+        api "com.github.implicit-invocation:jbump:$jbumpVersion"
+
     }
 }
