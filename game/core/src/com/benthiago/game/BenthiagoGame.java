@@ -22,6 +22,11 @@ public class BenthiagoGame extends Game {
 	public static float TILE_WIDTH;
 	public static float TILE_HEIGHT;
 
+	Soundtrack soundtrack;
+
+	Texture creditsTexture;
+
+	Credits credits;
 	Menu menu;
 	Mundo mundo;
 
@@ -40,6 +45,7 @@ public class BenthiagoGame extends Game {
 
 	@Override
 	public void create () {
+		soundtrack = new Soundtrack();
 
 		font = new BitmapFont();
 
@@ -65,6 +71,7 @@ public class BenthiagoGame extends Game {
 		playerCamera.setToOrtho(false, TILEMAP_WIDTH, TILEMAP_HEIGHT);
 		playerViewport = new ExtendViewport(TILE_WIDTH * 18, TILE_HEIGHT * 8, playerCamera);
 
+		this.credits = new Credits(this);
 		this.menu = new Menu(this);
 		this.mundo = new Mundo(this);
 
@@ -80,8 +87,10 @@ public class BenthiagoGame extends Game {
 	public void dispose () {
 		batch.dispose();
 		playerTexture.dispose();
+		credits.dispose();
 		menu.dispose();
 		mundo.dispose();
 		tiledMap.dispose();
+		soundtrack.dispose();
 	}
 }

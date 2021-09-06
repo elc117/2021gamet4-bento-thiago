@@ -25,13 +25,13 @@ public class Menu extends ScreenAdapter {
             new Button(new Texture("creditos.png")) {
                 @Override
                 void touchCallback() {
-                    // Doing nothing for now.
+                    game.setScreen(game.credits);
                 }
             },
             new Button(new Texture("opcoes.png")) {
                 @Override
                 void touchCallback() {
-                    // Doing nothing for now.
+                    game.soundtrack.toggle();
                 }
             }
         });
@@ -43,7 +43,8 @@ public class Menu extends ScreenAdapter {
     public void render(float delta) {
         ScreenUtils.clear(0.3f, 0.3f, 0.1f, 1);
 
-        game.menuCamera.update();
+        game.menuViewport.apply();
+
         game.batch.setProjectionMatrix(game.menuCamera.combined);
 
         game.batch.begin();
@@ -61,6 +62,8 @@ public class Menu extends ScreenAdapter {
                 button.checkTouched(touchPos.x, touchPos.y);
             }
         }
+
+        game.soundtrack.keepPlaying();
     }
 
     @Override

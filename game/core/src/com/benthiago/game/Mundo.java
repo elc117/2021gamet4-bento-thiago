@@ -11,7 +11,6 @@ import com.dongbat.jbump.World;
 
 public class Mundo extends ScreenAdapter {
     final BenthiagoGame game;
-    private final Soundtrack soundtrack;
 
     private Player protagonist;
     private Array<Enemy> enemies;
@@ -37,8 +36,6 @@ public class Mundo extends ScreenAdapter {
         protagonist = new Player(game.playerTexture, 3, 1, 0, 1, 3);
                 //game.playerViewport.getWorldWidth() / 2, game.playerViewport.getWorldHeight() / 2);
         world = new World<Entity>();
-
-        soundtrack = new Soundtrack();
     }
 
     @Override
