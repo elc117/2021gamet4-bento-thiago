@@ -1,7 +1,10 @@
 package com.benthiago.game;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -23,6 +26,8 @@ public class BenthiagoGame extends Game {
 	Mundo mundo;
 
 	SpriteBatch batch;
+	Texture playerTexture;
+
 	OrthographicCamera menuCamera;
 	OrthographicCamera playerCamera;
 	Viewport menuViewport;
@@ -31,10 +36,14 @@ public class BenthiagoGame extends Game {
 	TiledMap tiledMap;
 	OrthogonalTiledMapRenderer renderer;
 
+	BitmapFont font;
+
 	@Override
 	public void create () {
 
-		tiledMap = new TmxMapLoader().load("placeholder.tmx");
+		font = new BitmapFont();
+
+		tiledMap = new TmxMapLoader().load("map/Bosque.tmx");
 		renderer = new OrthogonalTiledMapRenderer(tiledMap, 1f);
 
 		{
@@ -46,6 +55,7 @@ public class BenthiagoGame extends Game {
 		}
 
 		batch = new SpriteBatch();
+		playerTexture = new Texture(Gdx.files.internal("characters/player-from-above.png"));
 
 		menuCamera = new OrthographicCamera();
 		menuCamera.setToOrtho(false, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
@@ -53,7 +63,7 @@ public class BenthiagoGame extends Game {
 
 		playerCamera = new OrthographicCamera();
 		playerCamera.setToOrtho(false, TILEMAP_WIDTH, TILEMAP_HEIGHT);
-		playerViewport = new ExtendViewport(TILE_WIDTH * 40, TILE_HEIGHT * 30, playerCamera);
+		playerViewport = new ExtendViewport(TILE_WIDTH * 18, TILE_HEIGHT * 8, playerCamera);
 
 		this.menu = new Menu(this);
 		this.mundo = new Mundo(this);
@@ -69,6 +79,7 @@ public class BenthiagoGame extends Game {
 	@Override
 	public void dispose () {
 		batch.dispose();
+		playerTexture.dispose();
 		menu.dispose();
 		mundo.dispose();
 		tiledMap.dispose();

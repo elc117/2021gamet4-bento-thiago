@@ -1,33 +1,44 @@
 package com.benthiago.game;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.utils.Array;
+import com.dongbat.jbump.World;
 
 public class Mundo extends ScreenAdapter {
     final BenthiagoGame game;
+    private final Soundtrack soundtrack;
 
-    private PlayerCharacter protagonist;
-    private Character prova;
-    private Combat combat;
+    private Player protagonist;
+    private Array<Enemy> enemies;
+    private Array<Projectile> projectiles;
 
+    private World<Entity> world;
 
     public Mundo(final BenthiagoGame game) {
         this.game = game;
 
-        protagonist = new PlayerCharacter();
-        prova = new Character();
-        combat = new Combat();
+        {
+            //RectangleMapObject spawnPoint = (RectangleMapObject) game.tiledMap.getLayers().get("objects").getObjects().get("playerSpawnpoint");
+            Gdx.app.setLogLevel(Application.LOG_DEBUG);
+            //Gdx.app.log("Player", "X: " + spawnPoint.getRectangle().x);
+            //Gdx.app.log("Player", "Y: " + spawnPoint.getRectangle().y);
+            //game.playerCamera.lookAt((float) (spawnPoint.getRectangle().getX() / 32), (float) (spawnPoint.getRectangle().getY() / 32), 0);
+            //for (MapObject object: game.tiledMap.getLayers().get("objects").getObjects()) {
+            //    Gdx.app.debug("test", "lala" + object.getName());
+            //}
 
-        float unitScale = 1 / (float) BenthiagoGame.TILE_HEIGHT;
-        //renderer = new OrthogonalTiledMapRenderer(tiledMap, unitScale);
+        }
+
+        protagonist = new Player(game.playerTexture, 3, 1, 0, 1, 3);
+                //game.playerViewport.getWorldWidth() / 2, game.playerViewport.getWorldHeight() / 2);
+        world = new World<Entity>();
+
+        soundtrack = new Soundtrack();
     }
 
     @Override
@@ -41,22 +52,23 @@ public class Mundo extends ScreenAdapter {
         game.renderer.render();
 
         game.batch.begin();
+        protagonist.draw(game.batch);
         game.batch.end();
 
         float playerOffsetY = 0.0f;
         float playerOffsetX = 0.0f;
 
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            playerOffsetX += 10.0f;
+            playerOffsetX += 100.0f * delta;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            playerOffsetX -= 10.0f;
+            playerOffsetX -= 100.0f * delta;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            playerOffsetY += 10.0f;
+            playerOffsetY += 100.0f * delta;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            playerOffsetY -= 10.0f;
+            playerOffsetY -= 100.0f * delta;
         }
 
         game.playerCamera.translate(playerOffsetX, playerOffsetY);
