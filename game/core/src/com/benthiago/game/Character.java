@@ -6,10 +6,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.dongbat.jbump.CollisionFilter;
-import com.dongbat.jbump.Rect;
-import com.dongbat.jbump.Response;
-import com.dongbat.jbump.World;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
+import com.dongbat.jbump.*;
 
 import static com.badlogic.gdx.math.MathUtils.clamp;
 
@@ -22,7 +22,7 @@ public class Character extends Entity {
 
     Direction direction;
 
-    Character(Texture animationTexture, int columns, int rows, int whichColumn, int startX, int endX, float worldX, float worldY) {
+    Character(Texture animationTexture, int columns, int rows, int whichRow, int startX, int endX, float worldX, float worldY) {
         super(worldX, worldY
                 , animationTexture.getWidth() / columns
                 , animationTexture.getHeight() / rows);
@@ -31,7 +31,7 @@ public class Character extends Entity {
                 , animationTexture.getWidth() / columns, animationTexture.getHeight() / rows);
         TextureRegion[] frames = new TextureRegion[endX - startX + 1];
         for (int i = startX; i <= endX; i++) {
-            frames[i - startX] = tmp[whichColumn][i - startX];
+            frames[i - startX] = tmp[whichRow][i - startX];
         }
         direction = Direction.UP;
 
@@ -49,7 +49,8 @@ public class Character extends Entity {
 
     public void move(Boolean up, Boolean down, Boolean right, Boolean left
             , float delta, World world
-            , float minX, float maxX, float minY, float maxY) {
+            , float minX, float maxX, float minY, float maxY
+            , TiledMap tiledMap, Mundo mundo) {
         float tryWorldX = worldX;
         float tryWorldY = worldY;
 
@@ -86,6 +87,22 @@ public class Character extends Entity {
         }
 
         Response.Result result = world.move(jbumpItem, tryWorldX, tryWorldY, CollisionFilter.defaultFilter);
+
+        for (Item other : result.projectedCollisions.others) {
+            if (((Entity) other.userData).pageLayer != null) {
+                TiledMapTileLayer pageLayer = (TiledMapTileLayer) tiledMap.getLayers().get("pages");
+                if (pageLayer != null) {
+                    TiledMapTileLayer.Cell cell = pageLayer.getCell(((Entity) other.userData).cellX, ((Entity) other.userData).cellY);
+                    if (cell != null) {
+                        cell.setTile(null);
+                        world.remove(other);
+                        mundo.paginas--;
+                        mundo.timerFim += 5;
+                    }
+                }
+            }
+        }
+
 
         worldX = result.goalX;
         worldY = result.goalY;

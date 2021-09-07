@@ -1,26 +1,36 @@
 package com.benthiago.game;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Button {
     private final float height;
     private final float width;
-    private Texture texture;
+    private Texture animationTexture;
+    private Animation animation;
     private int x;
     private int y;
+    private float animationDelay;
+    private float animationTime;
 
-    public Button(Texture texture, float scale) {
-        this.texture = texture;
+    public Button(Texture animationTexture, float scale, int columns, int rows, int startX, int endX, int whichRow) {
+        this.animationTexture = animationTexture;
         this.x = 0;
         this.y = 0;
-        this.width = texture.getWidth() * scale;
-        this.height = texture.getHeight() * scale;
+        this.width = animationTexture.getWidth() * scale / (endX - startX + 1);
+        this.height = animationTexture.getHeight() * scale;
+
+        TextureRegion[][] tmp = TextureRegion.split(animationTexture
+                , animationTexture.getWidth() / columns, animationTexture.getHeight() / rows);
+        TextureRegion[] frames = new TextureRegion[endX - startX + 1];
+        for (int i = startX; i <= endX; i++) {
+            frames[i - startX] = tmp[whichRow][i - startX];
+        }
+        animation = new Animation<TextureRegion>(0.2f, frames);
+        animationDelay = 5.0f;
+        animationTime = 0.0f;
     }
 
     public void setXY(int x, int y) {
@@ -28,8 +38,15 @@ public class Button {
         this.y = y;
     }
 
-    public void batchDraw(SpriteBatch batch) {
-        batch.draw(this.texture, this.x - width / 2, this.y - height / 2, width, height);
+    public void batchDraw(SpriteBatch batch, float delta) {
+        batch.draw((TextureRegion) this.animation.getKeyFrame(animationTime, false)
+                , this.x - width / 2, this.y - height / 2, width, height);
+        if (animationDelay > 0) {
+            animationDelay -= delta;
+        }
+        else {
+            animationTime += delta;
+        }
     }
 
     public boolean isTouched(float mouseX, float mouseY) {
@@ -44,7 +61,7 @@ public class Button {
     }
 
     void dispose() {
-        this.texture.dispose();
+        this.animationTexture.dispose();
     }
 
     static void arrangeCenterSpaceBetween(

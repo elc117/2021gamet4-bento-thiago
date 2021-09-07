@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class Menu extends ScreenAdapter {
@@ -17,9 +16,27 @@ public class Menu extends ScreenAdapter {
     Menu(final BenthiagoGame game) {
         this.game = game;
 
-        iniciar = new Button(new Texture("buttons/play-button.png"), 2.0f);
-        creditos = new Button(new Texture("buttons/credits-button.png"), 2.0f);
-        musica = new Button(new Texture("buttons/music-button.png"), 2.0f);
+        iniciar = new Button(new Texture("buttons/play-button.png"),
+                2.0f,
+                20,
+                1,
+                0,
+                19,
+                0);
+        creditos = new Button(new Texture("buttons/credits-button.png"),
+                2.0f,
+                1,
+                1,
+                0,
+                0,
+                0);
+        musica = new Button(new Texture("buttons/music-button.png"),
+                2.0f,
+                1,
+                1,
+                0,
+                0,
+                0);
 
         Button.arrangeCenterSpaceBetween(new Button[]{iniciar, creditos, musica}, BenthiagoGame.VIRTUAL_WIDTH, BenthiagoGame.VIRTUAL_HEIGHT);
     }
@@ -33,9 +50,9 @@ public class Menu extends ScreenAdapter {
         game.batch.setProjectionMatrix(game.menuCamera.combined);
 
         game.batch.begin();
-        iniciar.batchDraw(game.batch);
-        creditos.batchDraw(game.batch);
-        musica.batchDraw(game.batch);
+        iniciar.batchDraw(game.batch, delta);
+        creditos.batchDraw(game.batch, delta);
+        musica.batchDraw(game.batch, delta);
         game.batch.end();
 
         Vector3 touchPos = new Vector3();

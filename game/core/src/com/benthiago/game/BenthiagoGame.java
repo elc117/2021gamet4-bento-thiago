@@ -31,9 +31,16 @@ public class BenthiagoGame extends Game {
 	Credits credits;
 	Menu menu;
 	Mundo mundo;
+	Fim fim;
 
 	SpriteBatch batch;
+	SpriteBatch secondaryBatch;
 	Texture playerTexture;
+
+	Texture loser;
+	Texture start;
+	Texture winnerMax;
+	Texture winnerPartial;
 
 	OrthographicCamera menuCamera;
 	OrthographicCamera playerCamera;
@@ -50,6 +57,12 @@ public class BenthiagoGame extends Game {
 		soundtrack = new Soundtrack();
 
 		font = new BitmapFont();
+		font.getData().setScale(1.5f);
+
+		loser         = new Texture(Gdx.files.internal("endings/loser.png"));
+		start         = new Texture(Gdx.files.internal("endings/start.png"));
+		winnerMax     = new Texture(Gdx.files.internal("endings/winnerMax.png"));
+		winnerPartial = new Texture(Gdx.files.internal("endings/winnerpartial.png"));
 
 		tiledMap = new TmxMapLoader().load("map/Main.tmx");
 		renderer = new OrthogonalTiledMapRenderer(tiledMap, 1f);
@@ -65,6 +78,8 @@ public class BenthiagoGame extends Game {
 		WORLD_HEIGHT_VIEW = min(8, TILEMAP_HEIGHT);
 
 		batch = new SpriteBatch();
+		secondaryBatch = new SpriteBatch();
+
 		playerTexture = new Texture(Gdx.files.internal("characters/player-from-above.png"));
 
 		menuCamera = new OrthographicCamera();
@@ -97,5 +112,9 @@ public class BenthiagoGame extends Game {
 		mundo.dispose();
 		tiledMap.dispose();
 		soundtrack.dispose();
+		loser.dispose();
+		start.dispose();
+		winnerMax.dispose();
+		winnerPartial.dispose();
 	}
 }
