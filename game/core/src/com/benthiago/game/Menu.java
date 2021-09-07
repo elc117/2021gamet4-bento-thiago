@@ -10,33 +10,18 @@ import com.badlogic.gdx.utils.ScreenUtils;
 public class Menu extends ScreenAdapter {
     final BenthiagoGame game;
 
-    private Array<Button> buttons;
+    Button iniciar;
+    Button creditos;
+    Button musica;
 
     Menu(final BenthiagoGame game) {
         this.game = game;
 
-        this.buttons = new Array<Button>(new Button[] {
-            new Button(new Texture("iniciar.png")) {
-                @Override
-                void touchCallback() {
-                    game.setScreen(game.mundo);
-                }
-            },
-            new Button(new Texture("creditos.png")) {
-                @Override
-                void touchCallback() {
-                    game.setScreen(game.credits);
-                }
-            },
-            new Button(new Texture("opcoes.png")) {
-                @Override
-                void touchCallback() {
-                    game.soundtrack.toggle();
-                }
-            }
-        });
+        iniciar = new Button(new Texture("buttons/play-button.png"), 2.0f);
+        creditos = new Button(new Texture("buttons/credits-button.png"), 2.0f);
+        musica = new Button(new Texture("buttons/music-button.png"), 2.0f);
 
-        Button.arrangeCenterSpaceBetween(buttons, BenthiagoGame.VIRTUAL_WIDTH, BenthiagoGame.VIRTUAL_HEIGHT);
+        Button.arrangeCenterSpaceBetween(new Button[]{iniciar, creditos, musica}, BenthiagoGame.VIRTUAL_WIDTH, BenthiagoGame.VIRTUAL_HEIGHT);
     }
 
     @Override
@@ -48,18 +33,27 @@ public class Menu extends ScreenAdapter {
         game.batch.setProjectionMatrix(game.menuCamera.combined);
 
         game.batch.begin();
-        for (Button button: buttons) {
-            button.batchDraw(game.batch);
-        }
+        iniciar.batchDraw(game.batch);
+        creditos.batchDraw(game.batch);
+        musica.batchDraw(game.batch);
         game.batch.end();
 
         Vector3 touchPos = new Vector3();
         touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-        game.menuCamera.unproject(touchPos);
+        game.menuViewport.unproject(touchPos);
 
         if (Gdx.input.isTouched()) {
-            for (Button button: buttons) {
-                button.checkTouched(touchPos.x, touchPos.y);
+            if (iniciar.isTouched(touchPos.x, touchPos.y))
+            {
+                game.setScreen(game.mundo);
+            }
+            else if (creditos.isTouched(touchPos.x, touchPos.y))
+            {
+                game.setScreen(game.credits);
+            }
+            else if (musica.isTouched(touchPos.x, touchPos.y))
+            {
+                game.soundtrack.toggle();
             }
         }
 
@@ -73,8 +67,8 @@ public class Menu extends ScreenAdapter {
 
     @Override
     public void dispose() {
-        for (Button button: buttons) {
-            button.dispose();
-        }
+        iniciar.dispose();
+        creditos.dispose();
+        musica.dispose();
     }
 }

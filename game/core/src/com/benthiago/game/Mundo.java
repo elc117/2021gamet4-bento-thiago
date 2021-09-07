@@ -5,9 +5,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.utils.Array;
+import com.dongbat.jbump.Item;
 import com.dongbat.jbump.World;
+
+import java.util.Iterator;
+import java.util.Set;
 
 import static com.badlogic.gdx.math.MathUtils.clamp;
 
@@ -23,21 +27,32 @@ public class Mundo extends ScreenAdapter {
     public Mundo(final BenthiagoGame game) {
         this.game = game;
 
-        {
-            //RectangleMapObject spawnPoint = (RectangleMapObject) game.tiledMap.getLayers().get("objects").getObjects().get("playerSpawnpoint");
-            Gdx.app.setLogLevel(Application.LOG_DEBUG);
-            //Gdx.app.log("Player", "X: " + spawnPoint.getRectangle().x);
-            //Gdx.app.log("Player", "Y: " + spawnPoint.getRectangle().y);
-            //game.playerCamera.lookAt((float) (spawnPoint.getRectangle().getX() / 32), (float) (spawnPoint.getRectangle().getY() / 32), 0);
-            //for (MapObject object: game.tiledMap.getLayers().get("objects").getObjects()) {
-            //    Gdx.app.debug("test", "lala" + object.getName());
-            //}
+        protagonist = new Player(game.playerTexture
+                , 3, 1, 0, 1, 3
+                , 3, 0);
 
-        }
-
-        protagonist = new Player(game.playerTexture, 3, 1, 0, 1, 3);
-                //game.playerViewport.getWorldWidth() / 2, game.playerViewport.getWorldHeight() / 2);
         world = new World<Entity>();
+
+        protagonist.setItem(world.add(new Item<Entity>(protagonist)
+                , protagonist.getWorldX()
+                , protagonist.getWorldY()
+                , 1
+                , 1
+        ));
+
+        {
+            Gdx.app.setLogLevel(Application.LOG_DEBUG);
+            TiledMapTileLayer collisions = (TiledMapTileLayer) game.tiledMap.getLayers().get("collisions");
+            for (int x = 0; x < collisions.getWidth(); x++) {
+                for (int y = 0; y < collisions.getHeight(); y++) {
+                    if (collisions.getCell(x, y) != null) {
+                        world.add(
+                                new Item<Entity>(new Entity(x, y, game.TILE_WIDTH, game.TILE_HEIGHT))
+                                , x, y, 1, 1);
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -45,8 +60,6 @@ public class Mundo extends ScreenAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         {
-            //float actualWorldViewX = game.WORLD_WIDTH_VIEW;//game.playerViewport.();
-            //float actualWorldViewY = game.WORLD_HEIGHT_VIEW;//game.playerViewport.getWorldHeight();
             float actualWorldViewX = game.playerCamera.viewportWidth / game.TILE_WIDTH;
             float actualWorldViewY = game.playerCamera.viewportHeight / game.TILE_HEIGHT;
             float worldCameraX = clamp(protagonist.getWorldX()
@@ -65,29 +78,22 @@ public class Mundo extends ScreenAdapter {
         game.batch.setProjectionMatrix(game.playerCamera.combined);
 
         game.renderer.setView(game.playerCamera);
-        game.renderer.render();
+        game.renderer.render(new int[]{0, 1, 2, 3});
 
         game.batch.begin();
         protagonist.draw(game.batch);
         game.batch.end();
 
-        float playerOffsetY = 0.0f;
-        float playerOffsetX = 0.0f;
+        //game.renderer.render(new int[]{2});
 
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            playerOffsetX += 4.0f;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            playerOffsetX -= 4.0f;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            playerOffsetY += 4.0f;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            playerOffsetY -= 4.0f;
-        }
-
-        protagonist.move(playerOffsetX, playerOffsetY, delta);
+        protagonist.move(
+                Gdx.input.isKeyPressed(Input.Keys.UP)
+                , Gdx.input.isKeyPressed(Input.Keys.DOWN)
+                , Gdx.input.isKeyPressed(Input.Keys.RIGHT)
+                , Gdx.input.isKeyPressed(Input.Keys.LEFT)
+                , delta, world
+                , 0, game.TILEMAP_WIDTH
+                , 0, game.TILEMAP_HEIGHT);
 
         game.soundtrack.keepPlaying();
     }
