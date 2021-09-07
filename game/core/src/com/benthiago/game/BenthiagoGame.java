@@ -19,16 +19,14 @@ import static java.lang.Math.min;
 public class BenthiagoGame extends Game {
 	public static final int VIRTUAL_WIDTH  = 800;
 	public static final int VIRTUAL_HEIGHT = 480;
-	public static float TILEMAP_WIDTH;
-	public static float TILEMAP_HEIGHT;
-	public static float TILE_WIDTH;
-	public static float TILE_HEIGHT;
-	public static float WORLD_WIDTH_VIEW;
-	public static float WORLD_HEIGHT_VIEW;
+	public static float     TILEMAP_WIDTH;
+	public static float     TILEMAP_HEIGHT;
+	public static int       TILE_WIDTH;
+	public static int       TILE_HEIGHT;
+	public static float     WORLD_WIDTH_VIEW;
+	public static float     WORLD_HEIGHT_VIEW;
 
 	Soundtrack soundtrack;
-
-	Texture creditsTexture;
 
 	Credits credits;
 	Menu menu;
@@ -53,7 +51,7 @@ public class BenthiagoGame extends Game {
 
 		font = new BitmapFont();
 
-		tiledMap = new TmxMapLoader().load("map/Bosque.tmx");
+		tiledMap = new TmxMapLoader().load("map/Main.tmx");
 		renderer = new OrthogonalTiledMapRenderer(tiledMap, 1f);
 
 		{
